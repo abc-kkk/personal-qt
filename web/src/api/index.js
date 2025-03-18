@@ -5,7 +5,7 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const api = axios.create({
   // 生产环境使用相对路径，开发环境使用本地服务器
-  baseURL: isProd ? '' : 'http://8.138.205.53/',
+  baseURL: isProd ? '' : 'http://8.138.205.53:8000/',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
