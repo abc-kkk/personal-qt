@@ -32,7 +32,7 @@
     <el-card shadow="hover" class="chart-card">
       <div v-loading="loading">
         <div class="chart-header">
-          <h3>资金曲线</h3>
+          <h3>总资金曲线</h3>
           <div class="chart-actions">
             <el-select v-model="chartPeriod" placeholder="选择时间范围" style="width: 120px;">
               <el-option label="最近一周" value="7"></el-option>
@@ -51,52 +51,21 @@
     <el-card shadow="hover" class="fund-records-card" style="margin-top: 20px;">
       <template #header>
         <div class="card-header">
-          <span>资金记录列表</span>
+          <span>总资金记录列表</span>
         </div>
       </template>
       <el-table :data="dailyFunds" style="width: 100%" v-loading="loading" border stripe>
-        <el-table-column prop="fund_date" label="日期" width="120">
+        <el-table-column prop="fund_date" label="日期" width="150">
           <template #default="scope">
             {{ formatDate(scope.row.fund_date) }}
           </template>
         </el-table-column>
-        <el-table-column prop="total_amount" label="总资金" width="150">
+        <el-table-column prop="total_amount" label="总资金" width="200">
           <template #default="scope">
             {{ formatMoney(scope.row.total_amount) }}
           </template>
         </el-table-column>
-        <el-table-column prop="stock_amount" label="股票市值" width="150">
-          <template #default="scope">
-            {{ formatMoney(scope.row.stock_amount) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="cash_amount" label="现金" width="150">
-          <template #default="scope">
-            {{ formatMoney(scope.row.cash_amount) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="profit_amount" label="当日盈亏" width="150">
-          <template #default="scope">
-            <span :class="getProfitClass(scope.row.profit_amount)">
-              {{ scope.row.profit_amount ? formatMoney(scope.row.profit_amount) : '-' }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="profit_rate" label="当日收益率" width="120">
-          <template #default="scope">
-            <span :class="getProfitClass(scope.row.profit_rate)">
-              {{ scope.row.profit_rate ? `${scope.row.profit_rate}%` : '-' }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="cumulative_profit_rate" label="累计收益率" width="120">
-          <template #default="scope">
-            <span :class="getProfitClass(scope.row.cumulative_profit_rate)">
-              {{ scope.row.cumulative_profit_rate ? `${scope.row.cumulative_profit_rate}%` : '-' }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="notes" label="备注" min-width="200"></el-table-column>
+        <el-table-column prop="notes" label="备注" min-width="250"></el-table-column>
         <el-table-column label="操作" width="180" fixed="right">
           <template #default="scope">
             <el-button size="small" type="primary" @click="openDialog(scope.row)">
@@ -116,7 +85,7 @@
 
     <!-- 表单对话框 -->
     <el-dialog
-      :title="isEdit ? '编辑资金记录' : '新增资金记录'"
+      :title="isEdit ? '编辑总资金记录' : '新增总资金记录'"
       v-model="dialogVisible"
       width="600px"
     >
@@ -136,48 +105,6 @@
             :precision="2"
             :step="1000"
             :min="0"
-            style="width: 200px;"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item label="股票市值" prop="stock_amount">
-          <el-input-number
-            v-model="form.stock_amount"
-            :precision="2"
-            :step="1000"
-            :min="0"
-            style="width: 200px;"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item label="现金" prop="cash_amount">
-          <el-input-number
-            v-model="form.cash_amount"
-            :precision="2"
-            :step="1000"
-            :min="0"
-            style="width: 200px;"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item label="当日盈亏" prop="profit_amount">
-          <el-input-number
-            v-model="form.profit_amount"
-            :precision="2"
-            :step="100"
-            style="width: 200px;"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item label="当日收益率(%)" prop="profit_rate">
-          <el-input-number
-            v-model="form.profit_rate"
-            :precision="2"
-            :step="0.1"
-            style="width: 200px;"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item label="累计收益率(%)" prop="cumulative_profit_rate">
-          <el-input-number
-            v-model="form.cumulative_profit_rate"
-            :precision="2"
-            :step="0.1"
             style="width: 200px;"
           ></el-input-number>
         </el-form-item>
@@ -241,20 +168,13 @@ export default {
       id: '',
       fund_date: '',
       total_amount: null,
-      stock_amount: null,
-      cash_amount: null,
-      profit_amount: null,
-      profit_rate: null,
-      cumulative_profit_rate: null,
       notes: ''
     })
     
     // 表单验证规则
     const rules = {
       fund_date: [{ required: true, message: '请选择日期', trigger: 'change' }],
-      total_amount: [{ required: true, message: '请输入总资金', trigger: 'blur' }],
-      stock_amount: [{ required: true, message: '请输入股票市值', trigger: 'blur' }],
-      cash_amount: [{ required: true, message: '请输入现金', trigger: 'blur' }]
+      total_amount: [{ required: true, message: '请输入总资金', trigger: 'blur' }]
     }
 
     /**
@@ -356,7 +276,7 @@ export default {
           chartInstance.value = echarts.init(chartDom);
           chartInstance.value.setOption({
             title: {
-              text: '暂无资金数据',
+              text: '暂无总资金数据',
               left: 'center',
               top: 'center',
               textStyle: {
@@ -391,9 +311,6 @@ export default {
         // 准备数据
         const dates = sortedFunds.map(item => formatDate(item.fund_date));
         const totalAmounts = sortedFunds.map(item => Number(item.total_amount));
-        const stockAmounts = sortedFunds.map(item => Number(item.stock_amount));
-        const cashAmounts = sortedFunds.map(item => Number(item.cash_amount));
-        const profitRates = sortedFunds.map(item => item.cumulative_profit_rate ? Number(item.cumulative_profit_rate) : 0);
         
         // 设置选项
         const option = {
@@ -401,19 +318,13 @@ export default {
             trigger: 'axis',
             formatter: function(params) {
               let result = params[0].name + '<br/>';
-              params.forEach(param => {
-                const colorSpan = `<span style="display:inline-block;margin-right:5px;border-radius:50%;width:10px;height:10px;background-color:${param.color};"></span>`;
-                if (param.seriesName === '累计收益率') {
-                  result += `${colorSpan}${param.seriesName}: ${param.value}%<br/>`;
-                } else {
-                  result += `${colorSpan}${param.seriesName}: ${formatMoney(param.value)}<br/>`;
-                }
-              });
+              const colorSpan = `<span style="display:inline-block;margin-right:5px;border-radius:50%;width:10px;height:10px;background-color:${params[0].color};"></span>`;
+              result += `${colorSpan}总资金: ${formatMoney(params[0].value)}<br/>`;
               return result;
             }
           },
           legend: {
-            data: ['总资金', '股票市值', '现金', '累计收益率']
+            data: ['总资金']
           },
           grid: {
             left: '3%',
@@ -433,14 +344,6 @@ export default {
               axisLabel: {
                 formatter: '{value} 元'
               }
-            },
-            {
-              type: 'value',
-              name: '收益率',
-              position: 'right',
-              axisLabel: {
-                formatter: '{value} %'
-              }
             }
           ],
           series: [
@@ -451,34 +354,23 @@ export default {
               data: totalAmounts,
               itemStyle: {
                 color: '#409EFF'
-              }
-            },
-            {
-              name: '股票市值',
-              type: 'line',
-              smooth: true,
-              data: stockAmounts,
-              itemStyle: {
-                color: '#67C23A'
-              }
-            },
-            {
-              name: '现金',
-              type: 'line',
-              smooth: true,
-              data: cashAmounts,
-              itemStyle: {
-                color: '#E6A23C'
-              }
-            },
-            {
-              name: '累计收益率',
-              type: 'line',
-              smooth: true,
-              yAxisIndex: 1,
-              data: profitRates,
-              itemStyle: {
-                color: '#F56C6C'
+              },
+              lineStyle: {
+                width: 3
+              },
+              symbolSize: 8,
+              areaStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    { offset: 0, color: 'rgba(64, 158, 255, 0.5)' },
+                    { offset: 1, color: 'rgba(64, 158, 255, 0.1)' }
+                  ]
+                }
               }
             }
           ]
@@ -510,11 +402,6 @@ export default {
         form.id = item.id
         form.fund_date = formatDate(item.fund_date)
         form.total_amount = Number(item.total_amount)
-        form.stock_amount = Number(item.stock_amount)
-        form.cash_amount = Number(item.cash_amount)
-        form.profit_amount = item.profit_amount ? Number(item.profit_amount) : null
-        form.profit_rate = item.profit_rate ? Number(item.profit_rate) : null
-        form.cumulative_profit_rate = item.cumulative_profit_rate ? Number(item.cumulative_profit_rate) : null
         form.notes = item.notes || ''
       } else {
         isEdit.value = false
@@ -530,11 +417,6 @@ export default {
       form.id = ''
       form.fund_date = ''
       form.total_amount = null
-      form.stock_amount = null
-      form.cash_amount = null
-      form.profit_amount = null
-      form.profit_rate = null
-      form.cumulative_profit_rate = null
       form.notes = ''
       
       if (dailyFundForm.value) {
@@ -562,11 +444,6 @@ export default {
             const data = {
               fund_date: form.fund_date,
               total_amount: form.total_amount,
-              stock_amount: form.stock_amount,
-              cash_amount: form.cash_amount,
-              profit_amount: form.profit_amount,
-              profit_rate: form.profit_rate,
-              cumulative_profit_rate: form.cumulative_profit_rate,
               notes: form.notes
             }
             
@@ -624,16 +501,6 @@ export default {
       return Number(value).toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' 元'
     }
 
-    /**
-     * 获取盈亏样式
-     * @param {number} value - 金额或百分比
-     * @returns {string} 样式类名
-     */
-    const getProfitClass = (value) => {
-      if (value === null || value === undefined) return ''
-      return Number(value) > 0 ? 'profit' : Number(value) < 0 ? 'loss' : ''
-    }
-
     // 监听图表周期变化
     watch(chartPeriod, () => {
       fetchRecentDailyFunds()
@@ -667,7 +534,6 @@ export default {
       chartPeriod,
       formatDate,
       formatMoney,
-      getProfitClass,
       fetchDailyFunds,
       resetFilter,
       openDialog,

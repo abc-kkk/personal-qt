@@ -8,25 +8,13 @@ class DailyFundBase(BaseModel):
     """每日资金基础模型"""
     fund_date: date = Field(..., description="资金日期")
     total_amount: Decimal = Field(..., description="总资金")
-    stock_amount: Decimal = Field(..., description="股票市值")
-    cash_amount: Decimal = Field(..., description="现金")
-    profit_amount: Optional[Decimal] = Field(None, description="当日盈亏")
-    profit_rate: Optional[Decimal] = Field(None, description="当日收益率(%)")
-    cumulative_profit_rate: Optional[Decimal] = Field(None, description="累计收益率(%)")
     notes: Optional[str] = Field(None, description="备注")
 
-    @validator('cash_amount')
-    def validate_cash_amount(cls, v, values):
-        """验证现金不能大于总资金"""
-        if 'total_amount' in values and v > values['total_amount']:
-            raise ValueError('现金金额不能大于总资金')
-        return v
-
-    @validator('stock_amount')
-    def validate_stock_amount(cls, v, values):
-        """验证股票市值不能大于总资金"""
-        if 'total_amount' in values and v > values['total_amount']:
-            raise ValueError('股票市值不能大于总资金')
+    @validator('total_amount')
+    def validate_total_amount(cls, v):
+        """验证总资金不能为负"""
+        if v < 0:
+            raise ValueError('总资金不能为负')
         return v
 
 class DailyFundCreate(DailyFundBase):
@@ -37,11 +25,6 @@ class DailyFundUpdate(BaseModel):
     """用于更新每日资金的模型"""
     fund_date: Optional[date] = None
     total_amount: Optional[Decimal] = None
-    stock_amount: Optional[Decimal] = None
-    cash_amount: Optional[Decimal] = None
-    profit_amount: Optional[Decimal] = None
-    profit_rate: Optional[Decimal] = None
-    cumulative_profit_rate: Optional[Decimal] = None
     notes: Optional[str] = None
 
 class DailyFund(DailyFundBase):
