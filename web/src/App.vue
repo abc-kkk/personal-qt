@@ -17,7 +17,7 @@
             <el-icon><HomeFilled /></el-icon>
             <span>首页</span>
           </el-menu-item>
-          <el-sub-menu index="/investment">
+          <el-sub-menu index="investment">
             <template #title>
               <el-icon><TrendCharts /></el-icon>
               <span>投资管理</span>
@@ -25,6 +25,10 @@
             <el-menu-item index="/stock-trades">
               <el-icon><Histogram /></el-icon>
               <span>交易记录</span>
+            </el-menu-item>
+            <el-menu-item index="/daily-funds">
+              <el-icon><DataLine /></el-icon>
+              <span>资金曲线</span>
             </el-menu-item>
           </el-sub-menu>
           <el-menu-item index="/categories">
@@ -73,7 +77,7 @@
 <script>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { HomeFilled, TrendCharts, Histogram, Files, Warning, Calendar, Fold } from '@element-plus/icons-vue'
+import { HomeFilled, TrendCharts, Histogram, Files, Warning, Calendar, Fold, DataLine } from '@element-plus/icons-vue'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 
 export default {
@@ -86,7 +90,8 @@ export default {
     Files,
     Warning,
     Calendar,
-    Fold
+    Fold,
+    LineChart: DataLine
   },
   setup() {
     const route = useRoute()

@@ -4,6 +4,7 @@ import StockTrades from '@/views/StockTrades.vue'
 import Categories from '@/views/Categories.vue'
 import FailureCases from '@/views/FailureCases.vue'
 import DailyReviews from '@/views/DailyReviews.vue'
+import DailyFunds from '@/views/DailyFunds.vue'
 
 const routes = [
   {
@@ -35,6 +36,12 @@ const routes = [
     name: 'DailyReviews',
     component: DailyReviews,
     meta: { title: '每日复盘' }
+  },
+  {
+    path: '/daily-funds',
+    name: 'DailyFunds',
+    component: DailyFunds,
+    meta: { title: '资金曲线' }
   }
 ]
 

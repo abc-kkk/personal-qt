@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 from app.database.database import engine, get_db, Base
-from app.routers import categories, stock_trades, failure_cases, daily_reviews, upload
+from app.routers import categories, stock_trades, failure_cases, daily_reviews, upload, daily_funds
 
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
@@ -31,6 +31,7 @@ app.include_router(stock_trades.router)
 app.include_router(failure_cases.router)
 app.include_router(daily_reviews.router)
 app.include_router(upload.router)
+app.include_router(daily_funds.router)
 
 @app.get("/")
 def read_root():

@@ -5,13 +5,15 @@ export default createStore({
     categories: [],
     stockTrades: [],
     failureCases: [],
-    dailyReviews: []
+    dailyReviews: [],
+    dailyFunds: []
   },
   getters: {
     getCategories: state => state.categories,
     getStockTrades: state => state.stockTrades,
     getFailureCases: state => state.failureCases,
-    getDailyReviews: state => state.dailyReviews
+    getDailyReviews: state => state.dailyReviews,
+    getDailyFunds: state => state.dailyFunds
   },
   mutations: {
     SET_CATEGORIES(state, categories) {
@@ -25,6 +27,9 @@ export default createStore({
     },
     SET_DAILY_REVIEWS(state, dailyReviews) {
       state.dailyReviews = dailyReviews
+    },
+    SET_DAILY_FUNDS(state, dailyFunds) {
+      state.dailyFunds = dailyFunds
     }
   },
   actions: {

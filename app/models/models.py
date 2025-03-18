@@ -76,4 +76,22 @@ class DailyReview(Base):
     fall_count = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class DailyFund(Base):
+    """
+    每日资金表模型
+    """
+    __tablename__ = "daily_funds"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    fund_date = Column(Date, nullable=False, unique=True, index=True)
+    total_amount = Column(Numeric(14, 2), nullable=False, comment="总资金")
+    stock_amount = Column(Numeric(14, 2), nullable=False, comment="股票市值")
+    cash_amount = Column(Numeric(14, 2), nullable=False, comment="现金")
+    profit_amount = Column(Numeric(14, 2), nullable=True, comment="当日盈亏")
+    profit_rate = Column(Numeric(6, 2), nullable=True, comment="当日收益率(%)")
+    cumulative_profit_rate = Column(Numeric(6, 2), nullable=True, comment="累计收益率(%)")
+    notes = Column(Text, nullable=True, comment="备注")
+    created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow) 
