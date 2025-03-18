@@ -20,7 +20,7 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="分类">
-          <el-select v-model="filterForm.categoryId" placeholder="选择分类" clearable>
+          <el-select v-model="filterForm.categoryId" placeholder="选择分类" clearable style="width: 220px;">
             <el-option
               v-for="item in categories"
               :key="item.id"
@@ -141,7 +141,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="分类" prop="category_id">
-              <el-select v-model="form.category_id" placeholder="选择分类">
+              <el-select v-model="form.category_id" placeholder="选择分类" style="width: 220px;">
                 <el-option
                   v-for="item in categories"
                   :key="item.id"
@@ -679,5 +679,10 @@ export default {
 
 .loss {
   color: #67c23a;
+}
+
+/* 确保下拉选项宽度与选择框匹配 */
+:deep(.el-select-dropdown) {
+  min-width: 220px !important;
 }
 </style> 
