@@ -1,11 +1,8 @@
 import axios from 'axios'
 
-// 根据环境判断是否是生产环境
-const isProd = process.env.NODE_ENV === 'production'
-
 const api = axios.create({
-  // 生产环境使用相对路径，开发环境使用本地服务器
-  baseURL: isProd ? '' : 'http://8.138.205.53:8000/',
+  // 使用环境变量中配置的API基础URL
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'
