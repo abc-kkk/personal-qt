@@ -195,6 +195,10 @@ export default {
         const response = await api.get('/daily-funds/', { params })
         console.log('API响应:', response.data)
         dailyFunds.value = response.data || []
+        // 对数据按日期进行倒序排序
+        dailyFunds.value.sort((a, b) => {
+          return new Date(b.fund_date) - new Date(a.fund_date)
+        })
         initChart()
       } catch (error) {
         console.error('获取资金列表失败:', error)
@@ -242,6 +246,10 @@ export default {
         const response = await api.get(`/daily-funds/recent?days=${chartPeriod.value}`)
         console.log('API响应:', response.data)
         dailyFunds.value = response.data || []
+        // 对数据按日期进行倒序排序
+        dailyFunds.value.sort((a, b) => {
+          return new Date(b.fund_date) - new Date(a.fund_date)
+        })
         initChart()
       } catch (error) {
         console.error('获取资金记录列表失败:', error)
@@ -303,14 +311,14 @@ export default {
         // 初始化新实例
         chartInstance.value = echarts.init(chartDom);
         
-        // 排序日期
-        const sortedFunds = [...dailyFunds.value].sort((a, b) => {
+        // 为图表创建一个新的数据副本并按日期升序排序
+        const chartData = [...dailyFunds.value].sort((a, b) => {
           return new Date(a.fund_date) - new Date(b.fund_date);
         });
         
         // 准备数据
-        const dates = sortedFunds.map(item => formatDate(item.fund_date));
-        const totalAmounts = sortedFunds.map(item => Number(item.total_amount));
+        const dates = chartData.map(item => formatDate(item.fund_date));
+        const totalAmounts = chartData.map(item => Number(item.total_amount));
         
         // 设置选项
         const option = {

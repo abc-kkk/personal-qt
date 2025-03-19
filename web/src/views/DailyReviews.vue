@@ -251,7 +251,7 @@
         
         <div class="content-detail">
           <h3>复盘内容</h3>
-          <div class="content-text">{{ currentReview.content }}</div>
+          <div class="content-text" v-html="parseMarkdown(currentReview.content)"></div>
         </div>
       </div>
     </el-dialog>
@@ -262,6 +262,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Calendar, Plus, Edit, Delete, Search, RefreshRight, View } from '@element-plus/icons-vue'
+import { marked } from 'marked'
 import api from '@/api'
 
 export default {
@@ -492,6 +493,16 @@ export default {
       fetchDailyReviews()
     }
 
+    /**
+     * 解析Markdown内容为HTML
+     * @param {string} content - Markdown文本内容
+     * @returns {string} HTML格式内容
+     */
+    const parseMarkdown = (content) => {
+      if (!content) return ''
+      return marked(content)
+    }
+
     onMounted(() => {
       fetchDailyReviews()
     })
@@ -514,7 +525,8 @@ export default {
       getMarketRateClass,
       getMarketColor,
       formatDate,
-      resetFilter
+      resetFilter,
+      parseMarkdown
     }
   }
 }
@@ -642,13 +654,111 @@ export default {
 }
 
 .content-text {
-  white-space: pre-wrap;
   line-height: 1.8;
   color: #303133;
   padding: 16px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Markdown样式 */
+.content-text h1 {
+  font-size: 24px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+}
+
+.content-text h2 {
+  font-size: 20px;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+}
+
+.content-text h3 {
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.content-text h4, .content-text h5, .content-text h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 18px;
+  margin-bottom: 12px;
+}
+
+.content-text p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.content-text blockquote {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+  margin: 0 0 16px 0;
+}
+
+.content-text ul, .content-text ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.content-text code {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+}
+
+.content-text pre {
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+
+.content-text pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.content-text table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.content-text table th, .content-text table td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+.content-text table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.content-text table tr:nth-child(2n) {
+  background-color: #f6f8fa;
 }
 
 .profit {
