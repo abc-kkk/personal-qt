@@ -43,20 +43,6 @@
             <el-icon><Calendar /></el-icon>
             <span>每日复盘</span>
           </el-menu-item>
-          <el-sub-menu index="trading-manage">
-            <template #title>
-              <el-icon><Setting /></el-icon>
-              <span>交易管理</span>
-            </template>
-            <el-menu-item index="/trading-systems">
-              <el-icon><Document /></el-icon>
-              <span>交易系统</span>
-            </el-menu-item>
-            <el-menu-item index="/trading-restrictions">
-              <el-icon><CircleClose /></el-icon>
-              <span>交易禁令</span>
-            </el-menu-item>
-          </el-sub-menu>
         </el-menu>
       </el-aside>
       <el-container>
@@ -91,19 +77,7 @@
 <script>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { 
-  HomeFilled, 
-  TrendCharts, 
-  Histogram, 
-  Files, 
-  Warning, 
-  Calendar, 
-  Fold, 
-  DataLine,
-  Setting,
-  Document, 
-  CircleClose 
-} from '@element-plus/icons-vue'
+import { HomeFilled, TrendCharts, Histogram, Files, Warning, Calendar, Fold, DataLine } from '@element-plus/icons-vue'
 import Breadcrumb from '@/components/Breadcrumb.vue'
 
 export default {
@@ -117,10 +91,7 @@ export default {
     Warning,
     Calendar,
     Fold,
-    DataLine,
-    Setting,
-    Document,
-    CircleClose
+    LineChart: DataLine
   },
   setup() {
     const route = useRoute()
@@ -240,4 +211,4 @@ html, body {
 .el-menu-item:hover, .el-sub-menu__title:hover {
   background-color: #263445 !important;
 }
-</style>
+</style> 

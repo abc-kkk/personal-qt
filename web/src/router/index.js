@@ -5,6 +5,8 @@ import Categories from '@/views/Categories.vue'
 import FailureCases from '@/views/FailureCases.vue'
 import DailyReviews from '@/views/DailyReviews.vue'
 import DailyFunds from '@/views/DailyFunds.vue'
+import TradingSystems from '@/views/TradingSystems.vue'
+import TradingRestrictions from '@/views/TradingRestrictions.vue'
 
 const routes = [
   {
@@ -42,6 +44,18 @@ const routes = [
     name: 'DailyFunds',
     component: DailyFunds,
     meta: { title: '资金曲线' }
+  },
+  {
+    path: '/trading-systems',
+    name: 'TradingSystems',
+    component: TradingSystems,
+    meta: { title: '交易系统' }
+  },
+  {
+    path: '/trading-restrictions',
+    name: 'TradingRestrictions',
+    component: TradingRestrictions,
+    meta: { title: '交易禁令' }
   }
 ]
 

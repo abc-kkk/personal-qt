@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, Float, DateTime, Date, ForeignKey, Text, ARRAY, Numeric
+from sqlalchemy import Column, String, Integer, Float, DateTime, Date, ForeignKey, Text, ARRAY, Numeric, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -90,3 +90,31 @@ class DailyFund(Base):
     notes = Column(Text, nullable=True, comment="备注")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow) 
+class TradingSystem(Base):
+    """
+    交易系统表模型
+    """
+    __tablename__ = "trading_systems"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String(100), nullable=False)
+    content = Column(Text, nullable=False)
+    is_active = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class TradingRestriction(Base):
+    """
+    交易禁令表模型
+    """
+    __tablename__ = "trading_restrictions"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    title = Column(String(100), nullable=False)
+    content = Column(Text, nullable=False)
+    is_active = Column(Boolean, default=True)
+    sort_order = Column(Integer, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

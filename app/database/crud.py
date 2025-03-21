@@ -5,11 +5,14 @@ from datetime import datetime, date
 import uuid
 from decimal import Decimal
 
-from app.models.models import Category, StockTrade, FailureCase, DailyReview
+from app.models.models import Category, StockTrade, FailureCase, DailyReview, DailyFund, TradingSystem, TradingRestriction
 from app.schemas import category as category_schema
 from app.schemas import stock_trade as stock_trade_schema
 from app.schemas import failure_case as failure_case_schema
 from app.schemas import daily_review as daily_review_schema
+from app.schemas import daily_fund as daily_fund_schema
+from app.schemas import trading_system as trading_system_schema
+from app.schemas import trading_restriction as trading_restriction_schema
 
 # 分类CRUD操作
 def create_category(db: Session, category: category_schema.CategoryCreate) -> Category:
@@ -361,4 +364,202 @@ def delete_daily_review(db: Session, daily_review_id: uuid.UUID) -> bool:
         db.delete(db_daily_review)
         db.commit()
         return True
-    return False 
+    return False
+
+# 交易系统CRUD操作
+
+def create_trading_system(db: Session, trading_system: "trading_system_schema.TradingSystemCreate") -> TradingSystem:
+    """
+    创建新的交易系统
+    
+    @param db: 数据库会话
+    @param trading_system: 交易系统创建模式
+    @returns: 创建的交易系统对象
+    """
+    try:
+        # 兼容Pydantic v1和v2
+        if hasattr(trading_system, 'model_dump'):
+            data = trading_system.model_dump()
+        else:
+            data = trading_system.dict()
+            
+        db_trading_system = TradingSystem(**data)
+        db.add(db_trading_system)
+        db.commit()
+        db.refresh(db_trading_system)
+        return db_trading_system
+    except Exception as e:
+        db.rollback()
+        raise e
+
+def get_trading_system(db: Session, trading_system_id: uuid.UUID) -> Optional[TradingSystem]:
+    """
+    通过ID获取交易系统
+    
+    @param db: 数据库会话
+    @param trading_system_id: 交易系统ID
+    @returns: 获取的交易系统对象，如果不存在则为None
+    """
+    return db.query(TradingSystem).filter(TradingSystem.id == trading_system_id).first()
+
+def get_trading_systems(db: Session, skip: int = 0, limit: int = 100, only_active: bool = False) -> List[TradingSystem]:
+    """
+    获取交易系统列表
+    
+    @param db: 数据库会话
+    @param skip: 跳过的记录数
+    @param limit: 返回的记录数
+    @param only_active: 是否只返回激活的系统
+    @returns: 交易系统列表
+    """
+    query = db.query(TradingSystem)
+    
+    if only_active:
+        query = query.filter(TradingSystem.is_active == True)
+    
+    return query.order_by(TradingSystem.sort_order.asc()).offset(skip).limit(limit).all()
+
+def update_trading_system(db: Session, trading_system_id: uuid.UUID, trading_system: "trading_system_schema.TradingSystemUpdate") -> Optional[TradingSystem]:
+    """
+    更新交易系统
+    
+    @param db: 数据库会话
+    @param trading_system_id: 交易系统ID
+    @param trading_system: 交易系统更新模式
+    @returns: 更新后的交易系统对象，如果不存在则为None
+    """
+    try:
+        db_trading_system = get_trading_system(db, trading_system_id)
+        if not db_trading_system:
+            return None
+        
+        # 兼容Pydantic v1和v2
+        if hasattr(trading_system, 'model_dump'):
+            update_data = trading_system.model_dump(exclude_unset=True)
+        else:
+            update_data = trading_system.dict(exclude_unset=True)
+            
+        for key, value in update_data.items():
+            setattr(db_trading_system, key, value)
+        
+        db.commit()
+        db.refresh(db_trading_system)
+        return db_trading_system
+    except Exception as e:
+        db.rollback()
+        raise e
+
+def delete_trading_system(db: Session, trading_system_id: uuid.UUID) -> bool:
+    """
+    删除交易系统
+    
+    @param db: 数据库会话
+    @param trading_system_id: 交易系统ID
+    @returns: 是否成功删除
+    """
+    db_trading_system = get_trading_system(db, trading_system_id)
+    if not db_trading_system:
+        return False
+    
+    db.delete(db_trading_system)
+    db.commit()
+    return True
+
+# 交易禁令CRUD操作
+
+def create_trading_restriction(db: Session, trading_restriction: "trading_restriction_schema.TradingRestrictionCreate") -> TradingRestriction:
+    """
+    创建新的交易禁令
+    
+    @param db: 数据库会话
+    @param trading_restriction: 交易禁令创建模式
+    @returns: 创建的交易禁令对象
+    """
+    try:
+        # 兼容Pydantic v1和v2
+        if hasattr(trading_restriction, 'model_dump'):
+            data = trading_restriction.model_dump()
+        else:
+            data = trading_restriction.dict()
+            
+        db_trading_restriction = TradingRestriction(**data)
+        db.add(db_trading_restriction)
+        db.commit()
+        db.refresh(db_trading_restriction)
+        return db_trading_restriction
+    except Exception as e:
+        db.rollback()
+        raise e
+
+def get_trading_restriction(db: Session, trading_restriction_id: uuid.UUID) -> Optional[TradingRestriction]:
+    """
+    通过ID获取交易禁令
+    
+    @param db: 数据库会话
+    @param trading_restriction_id: 交易禁令ID
+    @returns: 获取的交易禁令对象，如果不存在则为None
+    """
+    return db.query(TradingRestriction).filter(TradingRestriction.id == trading_restriction_id).first()
+
+def get_trading_restrictions(db: Session, skip: int = 0, limit: int = 100, only_active: bool = False) -> List[TradingRestriction]:
+    """
+    获取交易禁令列表
+    
+    @param db: 数据库会话
+    @param skip: 跳过的记录数
+    @param limit: 返回的记录数
+    @param only_active: 是否只返回激活的禁令
+    @returns: 交易禁令列表
+    """
+    query = db.query(TradingRestriction)
+    
+    if only_active:
+        query = query.filter(TradingRestriction.is_active == True)
+    
+    return query.order_by(TradingRestriction.sort_order.asc()).offset(skip).limit(limit).all()
+
+def update_trading_restriction(db: Session, trading_restriction_id: uuid.UUID, trading_restriction: "trading_restriction_schema.TradingRestrictionUpdate") -> Optional[TradingRestriction]:
+    """
+    更新交易禁令
+    
+    @param db: 数据库会话
+    @param trading_restriction_id: 交易禁令ID
+    @param trading_restriction: 交易禁令更新模式
+    @returns: 更新后的交易禁令对象，如果不存在则为None
+    """
+    try:
+        db_trading_restriction = get_trading_restriction(db, trading_restriction_id)
+        if not db_trading_restriction:
+            return None
+        
+        # 兼容Pydantic v1和v2
+        if hasattr(trading_restriction, 'model_dump'):
+            update_data = trading_restriction.model_dump(exclude_unset=True)
+        else:
+            update_data = trading_restriction.dict(exclude_unset=True)
+            
+        for key, value in update_data.items():
+            setattr(db_trading_restriction, key, value)
+        
+        db.commit()
+        db.refresh(db_trading_restriction)
+        return db_trading_restriction
+    except Exception as e:
+        db.rollback()
+        raise e
+
+def delete_trading_restriction(db: Session, trading_restriction_id: uuid.UUID) -> bool:
+    """
+    删除交易禁令
+    
+    @param db: 数据库会话
+    @param trading_restriction_id: 交易禁令ID
+    @returns: 是否成功删除
+    """
+    db_trading_restriction = get_trading_restriction(db, trading_restriction_id)
+    if not db_trading_restriction:
+        return False
+    
+    db.delete(db_trading_restriction)
+    db.commit()
+    return True 
